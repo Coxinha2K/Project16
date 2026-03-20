@@ -6,7 +6,7 @@ def project16boot(args):
     bootargs = args[0]
     fs = args[1]
     debug = args[2]
-    import json, time
+    import json, time, types
     if debug:
         print(f"[Project16] Project16 loaded")
         
@@ -135,7 +135,18 @@ def project16boot(args):
             if debug:
                 print(f"[Project16] App code found, calling Platinum")
                 
+            platinum = types.ModuleType("platinum")
+            pcode = fs.catfile("P1", "/bin/platinum")
+            exec(pcode, platinum.__dict__)
+            if debug:
+                print(f"[Project16] Platinum loaded on RAM, running app")
             
+            mem = platinum.Memory(name="Project16's Platinum Memory")
+            for line in code.splitlines():
+                if debug:
+                    print(f"[Platinum] Running line {repr(line)} in memory {memory.data['Header']['MemoryName']} (ID {memory.data['Header']['MemoryID']})")
+                    
+                platinum.LineParser(line, mem)
     return
 
 def core16boot(args):
