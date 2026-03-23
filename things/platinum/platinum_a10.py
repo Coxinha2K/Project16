@@ -101,7 +101,7 @@ def LineParser(line, memory):
             memory.addvar(var, value)
         
     elif cmd == "Version":
-        print("The Platinum Project, version 1.0 alpha (MR12)")
+        print("The Platinum Project, version 1.0 alpha")
         
     elif cmd == "Exit" or cmd == "Stop":
         sys.exit()
