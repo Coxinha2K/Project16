@@ -1,5 +1,5 @@
 import time, json, requests, types
-print("Project16 A10 Installer")
+print("Project16 Installer")
 username = input("[?] Username for Project16: ")
 print("[i] Starting install process...")
 base = "https://raw.githubusercontent.com/Coxinha2K/Project16/main"
@@ -10,7 +10,7 @@ name = "rfs"
 rfs = types.ModuleType(name)
 exec(rfs_code, rfs.__dict__)
 print("[i] Install step 1 - creating filesystem")
-fs = rfs.Filesystem(name="Project16 A10")
+fs = rfs.Filesystem(name="Project16")
 
 print("[i] Install step 2 - formatting partitions")
 fs.format("P0", "Boot")
