@@ -2,6 +2,14 @@ import time
 class QuitCSRE(Exception):
     pass
 
+class Kernel:
+    def __init__(self, fs):
+        self.fs = fs
+        
+    def read_fs(self):
+        return self.fs
+    
+    
 def core16boot(args):
     bootargs = args[0]
     fs = args[1]
@@ -68,7 +76,8 @@ def core16boot(args):
         try:
             shell = types.ModuleType("shell")
             exec(code, shell.__dict__)
-            status = shell.init((bootargs, fs, debug))
+            api = Kernel(fs=fs)
+            status = shell.init((bootargs, api, debug))
             if "/userlist" in fs.data["Partitions"]["P2"]["Tree"]:
                 if debug:
                     print(f"[Core16] Userlist needs to be changed")
