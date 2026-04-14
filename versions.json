@@ -1,0 +1,35 @@
+{
+    "RetroFS": {
+        "Versions": ["A10"],
+        "Latest": {
+            "Version": "A10",
+            "Path": "things/retrofs/retrofs_a10.py"
+        },
+        "Oldest": {
+            "Version": "A10",
+            "Path": "things/retrofs/retrofs_a10.py"
+        }
+    },
+    "Core16": {
+        "Versions": ["A10-SE", "A11-SE"],
+        "Latest": {
+            "Version": "A11-SE",
+            "Path": "things/core16/core16_a11_se.py"
+        },
+        "Oldest": {
+            "Version": "A10-SE",
+            "Path": "things/core16/core16_a10_se.py"
+        }
+    },
+    "Machine16": {
+        "Versions": ["A10"],
+        "Latest": {
+            "Version": "A10",
+            "Path": "things/machine16/machine16_a10.py"
+        },
+        "Oldest": {
+            "Version": "A10",
+            "Path": "things/machine16/machine16_a10.py"
+        }
+    }
+}
