@@ -32,6 +32,17 @@
             "Path": "things/machine16/machine16_a10.py"
         }
     },
+    "Platinum": {
+        "Versions": ["A10"],
+        "Latest": {
+            "Version": "A10",
+            "Path": "things/platinum/platinum_a10.py"
+        },
+        "Oldest": {
+            "Version": "A10",
+            "Path": "things/platinum/platinum_a10.py"
+        }
+    },
     "Shell": {
         "Versions": ["A10"],
         "Latest": {
