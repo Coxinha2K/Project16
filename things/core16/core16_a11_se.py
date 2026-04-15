@@ -74,6 +74,7 @@ def core16boot(args):
         fs.mkdir("P2", "/project")
             
         try:
+            code = fs.catfile("P0", "/system/bin/shell")
             shell = types.ModuleType("shell")
             exec(code, shell.__dict__)
             api = Kernel(fs=fs)
