@@ -3,13 +3,162 @@ class QuitCSRE(Exception):
     pass
 
 class Kernel:
-    def __init__(self, fs):
+    def __init__(self, bootargs, fs, debug=False):
+        self.authority = {
+            "Configured": False,
+            "Data": {
+                "Name": None,
+                "Permissions": []
+            }
+        }
         self.fs = fs
+        self.debug = debug
+        if self.debug:
+            print("[Core16 API] Waiting API (authority) configuration")
+            
+        """
+        Authority system for Core16:
+        Permissions is a list of strings that define what the authority can do
+        FS_ACCESS: This permission lets the authority use the FS directly, meaning that the authority can access the FS object entirely, bypassing the standard FS API (mkdir, mkfile, etc)
+        FS_READ: This permission lets the authority read the FS using the standard FS API (mkdir, mkfile, all this sh*t)
+        FS_WRITE: This permission lets the authority write to the FS using the standard FS API (mkdir, mkfile, i don't want to repeat ts again)
+        API_CALLS: This permission lets the authority call the Kernel API for using the actual functions, like the entire FS API
+        Back to the authority thing, this is not persistent!
+        This is not saved anywhere, like:
+        - the VRAM (virtual RAM, not video RAM) don't store it
+        - it don't go to RetroFS
+        - and it stays on the real RAM, but gets lost when you kill the script
+        """
         
     def read_fs(self):
-        return self.fs
-    
-    
+        if self.authority["Configured"]:
+            if "API_CALLS" not in self.authority["Data"]["Permissions"]:
+                if self.debug:
+                    print("[Core16 API] Can't read FS: WHY API_CALLS ISN'T IN PERMISSION THAT DOESN'T MAKE SENSE WTH")
+                    
+                return (1, "API calls not allowed")
+            if self.debug:
+                print(f"[Core16 API] {self.authority['Data']['Name']} is the current authority")
+            if "FS_RAW_READ" in self.authority["Data"]["Permissions"]:
+                if self.debug:
+                    print("[Core16 API] Access granted to FS, returning it")
+                return (0, self.fs)
+            else:
+                if self.debug:
+                    print("[Core16 API] Can't read since there is no permission to read FS")
+                return (1, "No permission to read FS")
+        else:
+            if self.debug:
+                print("[Core16 API] Can't read FS since authority is not configured")
+                
+    def _disabledsetup(self, name=None, permissions=None):
+        if self.debug:
+            print("[Core16 API] Tried to run authority setup but it's disabled")
+            
+    def authority_setup(self, name="Core16 Authority for Project16", permissions=None):
+        if permissions == None:
+            if self.debug:
+                print("[Core16 API] No permissions configured, using standard")
+                
+            permissions = ["FS_READ", "FS_WRITE", "API_CALLS"]
+            
+        authority = {
+            "Configured": True,
+            "Data": {
+                "Name": name,
+                "Permissions": permissions
+            }
+        }
+        if self.debug:
+            print(f"[Core16 API] Configuring {name}'s authority")
+            
+        self.authority = authority
+        if self.debug:
+            print(f"[Core16 API] Current authority to this API: {name} (level {level}) | Permissions: {permissions}")
+            print("[Core16 API] Disabling authority setup")
+            
+        self.authority_setup = self._disabledsetup
+            
+    def mkdir(self, partition, path):
+        if self.debug:
+            print(f"[Core16 API] Creating folder {path}@{partition}")
+            
+        a = self.authority
+        if a["Configured"]:
+            if "API_CALLS" not in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Can't create folder... no API_CALLS... wth this dont make any sense why we can call the kernel btw")
+                return (1, "No API calls allowed")
+            
+            if "FS_WRITE" in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Creating folder (permissions check out)")
+                self.fs.mkdir(partition, path)
+            else:
+                if self.debug:
+                    print(f"[Core16 API] Can't create folder: can't write to filesystem")
+                    
+    def mkfile(self, partition, path, content):
+        if self.debug:
+            print(f"[Core16 API] Creating file {path}@{partition}")
+            
+        a = self.authority
+        if a["Configured"]:
+            if "API_CALLS" not in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Can't create file... no API_CALLS... wth this dont make any sense why we can call the kernel btw")
+                return (1, "No API calls allowed")
+
+            if "FS_WRITE" in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Creating file (permissions check out)")
+                self.fs.mkfile(partition, path, content)
+            else:
+                if self.debug:
+                    print(f"[Core16 API] Can't create file: can't write to filesystem")
+                    
+    def catfile(self, partition, path):
+        if self.debug:
+            print(f"[Core16 API] Reading file {path}@{partition}")
+            
+        a = self.authority
+        if a["Configured"]:
+            if "API_CALLS" not in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Can't read file... no API_CALLS... wth this dont make any sense why we can call the kernel btw")
+                return (1, "No API calls allowed")
+        
+            if "FS_READ" in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Reading file (permissions check out)")
+                return (0, self.fs.catfile(partition, path))
+            else:
+                if self.debug:
+                    print(f"[Core16 API] Can't read file: can't read from filesystem")
+                
+    def objectexists(self, partition, path):
+        if self.debug:
+            print(f"[Core16 API] Verifying if {path}@{partition} exists")
+            
+        a = self.authority
+        if a["Configured"]:
+            if "API_CALLS" not in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Can't verify... no API_CALLS... wth this dont make any sense why we can call the kernel btw")
+                return (1, "No API calls allowed")
+            
+            if "FS_READ" in a["Data"]["Permissions"]:
+                if self.debug:
+                    print(f"[Core16 API] Verifying (permissions check out)")
+                if path not in self.fs.data["Partitions"][partition]["Tree"]:
+                    return False
+                else:
+                    return True
+                
+            else:
+                if self.debug:
+                    print(f"[Core16 API] Can't verify: can't read from filesystem")
+                    
 def core16boot(args):
     bootargs = args[0]
     fs = args[1]
@@ -77,7 +226,8 @@ def core16boot(args):
             code = fs.catfile("P0", "/system/bin/shell")
             shell = types.ModuleType("shell")
             exec(code, shell.__dict__)
-            api = Kernel(fs=fs)
+            api = Kernel(bootargs, fs, debug=debug)
+            api.authority_setup()
             status = shell.init((bootargs, api, debug))
             if "/userlist" in fs.data["Partitions"]["P2"]["Tree"]:
                 if debug:
