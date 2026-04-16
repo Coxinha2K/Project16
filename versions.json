@@ -44,10 +44,10 @@
         }
     },
     "Shell": {
-        "Versions": ["A10"],
+        "Versions": ["A10", "A11"],
         "Latest": {
-            "Version": "A10",
-            "Path": "things/shell/shell_a10.py"
+            "Version": "A11",
+            "Path": "things/shell/shell_a11.py"
         },
         "Oldest": {
             "Version": "A10",
