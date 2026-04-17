@@ -1,6 +1,7 @@
-import json, requests, types
+import json, requests, types, sys
 base = "https://raw.githubusercontent.com/Coxinha2K/Project16/main"
-code = requests.get(f"{base}/things/retrofs/retrofs_alpha.py").text
+vlist = json.loads(requests.get(f"{base}/versions.json").text)
+code = requests.get(f"{base}/{vlist['RetroFS']['Latest']['Path']}").text
 name = "rfs"
 rfs = types.ModuleType(name)
 exec(code, rfs.__dict__)
@@ -22,7 +23,11 @@ class Kernel:
         func(args)
         
 fs = rfs.Filesystem(name="Machine16")
-file = "Project16.rfs"
+try:
+    file = sys.argv[1]
+except:
+    file = "Project16.rfs"
+    
 fs.importfs(file)
 try:
     bootargs = json.loads(fs.catfile("P0", "/system/config/boot.cfg"))
@@ -45,7 +50,7 @@ if "core16boot" not in np:
     exit()
     
 # bootargs["Core16"]["Debug"] = True
-# bootargs["Project16"]["CSRE"]["CSREEnabled"] = False
+# bootargs["Project16"]["CSRE"]["CSREEnabled"] = True
 fs.mkfile("P0", "/system/config/boot.cfg", json.dumps(bootargs))
 krnl = Kernel(compiled_krnl)
 try:
