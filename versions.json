@@ -11,10 +11,10 @@
         }
     },
     "Core16": {
-        "Versions": ["A10-SE", "A11-SE"],
+        "Versions": ["A10-SE", "A11-SE", "B10-SE"],
         "Latest": {
-            "Version": "A11-SE",
-            "Path": "things/core16/core16_a11_se.py"
+            "Version": "B10-SE",
+            "Path": "things/core16/core16_b10_se.py"
         },
         "Oldest": {
             "Version": "A10-SE",
