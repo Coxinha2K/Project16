@@ -13,7 +13,12 @@ Project16 exists because i always wanted to know how do a OS works, so i built P
 ## Why would i use Project16?
 If you are like me and want to learn how a OS works, i think Project16 is a good choice, because:
 
-- Machine16 is like your real hardware, it loads the filesystem, runs the bootloader (in A10, M16 IS the bootloader so it runs the kernel instead) and do stuff happen
-- RetroFS is a stoopid easy thing to work with, since it uses JSON as encoding and the structure is easy (i'll update it, no worry)
-- Core16 is your kernel, which handles the recovery mode, also called CSRE (Core System Recovery Environment) and Project16 (the userland)
-- Project16 is such a extensible thing, since it is easy to work with
+- Machine16 is like the PC: it runs the kernel, handles the SSD and other things
+- RetroFS is like your SSD: it stores the OS, holds data, etc
+- Core16 is like your kernel: it runs the OS, handles authority and a lot more
+- Project16 is like your OS: it is what you use, to run your apps and stuff
+
+## Is it any good?
+Well, i keep maintaining Project16 and i'm working in some updates to it, so i say:
+
+***Yes, Project16 is good for study, hobbies, learning and curiosity.***
